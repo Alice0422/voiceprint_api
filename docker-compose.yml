@@ -4,7 +4,7 @@ version: '3'
 services:
   # MCP 接入点服务
   voiceprint-api:
-    # 使用 GitHub Actions 构建的镜像
+    # 使用 GitHub Actions 构建的镜像（仓库名称已转换为小写和连字符）
     image: ghcr.io/alice0422/voiceprint-api:latest
     container_name: voiceprint-api
     restart: always

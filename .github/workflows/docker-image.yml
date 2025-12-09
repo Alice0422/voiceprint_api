@@ -50,6 +50,14 @@ jobs:
             echo "IS_VERSION=false" >> $GITHUB_ENV
           fi
 
+      - name: Normalize repository name
+        id: normalize_repo
+        run: |
+          # 将仓库名称转换为小写，并将下划线替换为连字符
+          REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]' | tr '_' '-')
+          echo "REPO_NAME=${REPO_NAME}" >> $GITHUB_ENV
+          echo "Repository name normalized to: ${REPO_NAME}"
+
       # 构建 VOICEPRINT API 镜像
       - name: Build and push voiceprint-api
         uses: docker/build-push-action@v6
@@ -58,5 +66,5 @@ jobs:
           file: Dockerfile
           push: true
           tags: |
-            ${{ env.IS_VERSION == 'true' && format('ghcr.io/{0}:{1},ghcr.io/{0}:latest', github.repository, env.VERSION) || format('ghcr.io/{0}:latest', github.repository) }}
+            ${{ env.IS_VERSION == 'true' && format('ghcr.io/{0}:{1},ghcr.io/{0}:latest', env.REPO_NAME, env.VERSION) || format('ghcr.io/{0}:latest', env.REPO_NAME) }}
           platforms: linux/amd64,linux/arm64
