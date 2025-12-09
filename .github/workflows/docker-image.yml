@@ -16,18 +16,28 @@ jobs:
       id-token: write
       issues: write
     steps:
-      - name: Check Disk Space
-        run: |
-          df -h
-          docker system df
-
-      - name: Clean up Docker resources
-        run: |
-          docker system prune -af
-          docker builder prune -af
-
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Check Disk Space (Before)
+        run: |
+          df -h
+          docker system df || true
+
+      - name: Clean up Docker resources (Before Build)
+        run: |
+          # 停止所有容器
+          docker ps -aq | xargs -r docker stop || true
+          # 删除所有容器
+          docker ps -aq | xargs -r docker rm || true
+          # 删除所有镜像
+          docker images -q | xargs -r docker rmi -f || true
+          # 清理所有未使用的资源（包括卷）
+          docker system prune -af --volumes || true
+          # 清理构建缓存
+          docker builder prune -af || true
+          # 清理 Buildx 缓存
+          docker buildx prune -af || true
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -67,4 +77,5 @@ jobs:
           push: true
           tags: |
             ${{ env.IS_VERSION == 'true' && format('ghcr.io/{0}:{1},ghcr.io/{0}:latest', env.REPO_NAME, env.VERSION) || format('ghcr.io/{0}:latest', env.REPO_NAME) }}
-          platforms: linux/amd64,linux/arm64
+          # 只构建 amd64 平台（Ubuntu 服务器使用）
+          platforms: linux/amd64
