@@ -1,0 +1,35 @@
+# Git（最重要：.git 目录可能很大）
+.git
+.gitignore
+.github
+
+# Python 缓存
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info
+
+# 虚拟环境
+venv
+env
+ENV
+
+# IDE
+.vscode
+.idea
+
+# 日志
+*.log
+logs
+
+# 数据目录（通过 volume 挂载，不需要打包到镜像）
+data
+tmp
+
+# Docker 相关（构建时不需要）
+docker-compose.yml
+.dockerignore
+

@@ -20,6 +20,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 第二阶段：运行阶段
 FROM python:3.10-slim
 
+# 安装运行时系统依赖（librosa 和 soundfile 需要）
+RUN apt-get update && apt-get install -y \
+    libsndfile1 \
+    libsamplerate0 \
+    && rm -rf /var/lib/apt/lists/*
+
 # 设置工作目录
 WORKDIR /app
 
